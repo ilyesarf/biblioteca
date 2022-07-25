@@ -48,7 +48,7 @@ def login():
 		else:
 			error = "User not found"
 
-	return render_template("login.html")
+	return render_template("login.html", error=error)
 	
 
 app.run()
