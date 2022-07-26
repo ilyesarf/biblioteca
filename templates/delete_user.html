@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Reminder App</title>
+	</head>
+
+	<body>
+		<center><h1>Delete User</h1></center>
+
+		<form action="/delete_user" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username"><br><br>
+            <input type="submit" value="Delete User">
+            {% if error %}
+            <p class="error"><strong>Error:</strong> {{ error }}</p>
+            {% endif %}
+        </form>
+	</body>
+</html>
