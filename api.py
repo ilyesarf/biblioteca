@@ -58,6 +58,8 @@ def delete_user():
 
 	if request.method == "POST":
 		username = request.form["username"]
+		if username == "Unknown":
+			error = "You cannot delete 'Unknown' user"
 
 		if check_user(username):
 			if len(usernames["usernames"]) == 2 and usernames["usernames"][0] == "Unknown":
