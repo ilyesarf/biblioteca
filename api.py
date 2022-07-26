@@ -90,4 +90,4 @@ def delete_user():
 
 	return render_template("delete_user.html", error=error)
 
-app.run()
+app.run(host='0.0.0.0', port="8080")
