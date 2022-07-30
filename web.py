@@ -62,28 +62,32 @@ def delete_user():
 			error = "You cannot delete 'Unknown' user"
 
 		if check_user(username):
-			if len(usernames["usernames"]) == 2 and usernames["usernames"][0] == "Unknown":
-				usernames["usernames"].remove(username)
-				json.dump(usernames, open("usernames.json", "w"))
+			if recognizer.recognize(usernames["usernames"]) == username:
 
-				shutil.rmtree("nanolock/dataset")
-				shutil.rmtree("nanolock/model")
+				if len(usernames["usernames"]) == 2 and usernames["usernames"][0] == "Unknown":
+					usernames["usernames"].remove(username)
+					json.dump(usernames, open("usernames.json", "w"))
 
+					shutil.rmtree("nanolock/dataset")
+					shutil.rmtree("nanolock/model")
+
+				else:
+					id = usernames["usernames"].index(username)
+
+					usernames["usernames"].remove(username)
+					json.dump(usernames, open("usernames.json", "w"))
+
+					for i in range(1,61):
+						file = f"img.{str(id)}.{str(i)}.jpg"
+						os.remove(f"nanolock/dataset/{file}")
+
+					shutil.rmtree("nanolock/model")
+					os.makedirs("nanolock/model")
+					recognizer.train()
+
+				return render_template("index.html")
 			else:
-				id = usernames["usernames"].index(username)
-
-				usernames["usernames"].remove(username)
-				json.dump(usernames, open("usernames.json", "w"))
-
-				for i in range(1,61):
-					file = f"img.{str(id)}.{str(i)}.jpg"
-					os.remove(f"nanolock/dataset/{file}")
-
-				shutil.rmtree("nanolock/model")
-				os.makedirs("nanolock/model")
-				recognizer.train()
-
-			return render_template("index.html")
+				error = "U can't delete another user's account"
 
 		else:
 			error = "User not found!"
