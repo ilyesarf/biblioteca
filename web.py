@@ -2,6 +2,7 @@ import sys, os, json, shutil
 sys.path.insert(1, 'nanolock/')
 
 from flask import Flask, render_template, request
+from hashlib import md5
 from nanolock.recognizer import Recognizer
 
 
@@ -31,7 +32,7 @@ def signup():
 			recognizer.setup(username)
 			return render_template("login.html", username=request.form["username"])
 		else:
-			return render_template("welcome.html", username=request.form["username"])
+			return render_template("login.html")
 
 	return render_template('signup.html')
 
@@ -68,18 +69,15 @@ def delete_user():
 					usernames["usernames"].remove(username)
 					json.dump(usernames, open("usernames.json", "w"))
 
-					shutil.rmtree("nanolock/dataset")
+					shutil.rmtree(f"nanolock/dataset/{md5(username.encode()).hexdigest()}")
 					shutil.rmtree("nanolock/model")
 
 				else:
-					id = usernames["usernames"].index(username)
-
 					usernames["usernames"].remove(username)
 					json.dump(usernames, open("usernames.json", "w"))
+					recognizer.usernames = usernames
 
-					for i in range(1,61):
-						file = f"img.{str(id)}.{str(i)}.jpg"
-						os.remove(f"nanolock/dataset/{file}")
+					shutil.rmtree(f"nanolock/dataset/{md5(username.encode()).hexdigest()}")
 
 					shutil.rmtree("nanolock/model")
 					os.makedirs("nanolock/model")
