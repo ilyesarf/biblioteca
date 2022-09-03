@@ -3,12 +3,13 @@ sys.path.insert(1, 'nanolock/')
 
 from flask import Flask, render_template, request
 from hashlib import md5
-from nanolock.recognizer import Recognizer
+from nanolock.recognizer import Verification
+from nanolock.recognizer import NoFaceDetected
 
 
 app = Flask(__name__)
 
-recognizer = Recognizer()
+verifier = Verification()
 
 def check_user(username):
 	if os.path.isfile("usernames.json"):
@@ -25,29 +26,47 @@ def index():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
+	error = None
+
 	if request.method == "POST":
 		username = request.form["username"]
 
 		if check_user(username) == False:
-			recognizer.setup(username)
-			return render_template("login.html", username=request.form["username"])
+			try:
+				verifier.setup(username)
+				return render_template("login.html")
+			except NoFaceDetected:
+				error="No Face Was Detected"
+				
+				verifier.usernames["usernames"].remove(username)
+				json.dump(verifier.usernames, open("usernames.json", "w"))
+
+				shutil.rmtree(f"nanolock/dataset/{md5(username.encode()).hexdigest()}")
+
 		else:
 			return render_template("login.html")
 
-	return render_template('signup.html')
+	return render_template('signup.html', error=error)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-	usernames= json.loads(open("usernames.json", "r").read())
 	error = None
 	
 	if request.method == "POST":
-		username = recognizer.recognize(usernames["usernames"])
-		if username != False:
-			return render_template("welcome.html", username=username)
-		else:
-			error = "User not found"
+		username = request.form["username"]
+
+		accept_login = False
+		try:
+			accept_login = verifier.accept_login(username)
+
+			if accept_login:
+				return render_template("welcome.html", username=username)
+			else:
+				error = f"You are not {username} !!"
+
+		except NoFaceDetected:
+			error = "Face not detected"
 
 	return render_template("login.html", error=error)
 
@@ -63,25 +82,20 @@ def delete_user():
 			error = "You cannot delete 'Unknown' user"
 
 		if check_user(username):
-			if recognizer.recognize(usernames["usernames"]) == username:
+			if verifier.accept_login(username):
 
 				if len(usernames["usernames"]) == 2 and usernames["usernames"][0] == "Unknown":
 					usernames["usernames"].remove(username)
 					json.dump(usernames, open("usernames.json", "w"))
 
 					shutil.rmtree(f"nanolock/dataset/{md5(username.encode()).hexdigest()}")
-					shutil.rmtree("nanolock/model")
 
 				else:
 					usernames["usernames"].remove(username)
 					json.dump(usernames, open("usernames.json", "w"))
-					recognizer.usernames = usernames
+					verifier.usernames = usernames
 
 					shutil.rmtree(f"nanolock/dataset/{md5(username.encode()).hexdigest()}")
-
-					shutil.rmtree("nanolock/model")
-					os.makedirs("nanolock/model")
-					recognizer.train()
 
 				return render_template("index.html")
 			else:

@@ -10,6 +10,8 @@
         <center><h1>Login</h1></center>
 
         <form action="/login" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username"><br><br>
             <input type="submit" value="Scan My Face">
             {% if error %}
             <p class="error"><strong>Error:</strong> {{ error }}</p>
