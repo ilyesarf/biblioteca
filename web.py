@@ -56,17 +56,21 @@ def login():
 	if request.method == "POST":
 		username = request.form["username"]
 
-		accept_login = False
-		try:
-			accept_login = verifier.accept_login(username)
+		if check_user(username):
+			accept_login = False
+			
+			try:
+				accept_login = verifier.accept_login(username)
 
-			if accept_login:
-				return render_template("welcome.html", username=username)
-			else:
-				error = f"You are not {username} !!"
+				if accept_login:
+					return render_template("welcome.html", username=username)
+				else:
+					error = f"You are not {username} !!"
 
-		except NoFaceDetected:
-			error = "Face not detected"
+			except NoFaceDetected:
+				error = "Face not detected"
+		else:
+			error = f"User: {username} doesn't exist"
 
 	return render_template("login.html", error=error)
 
