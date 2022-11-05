@@ -6,3 +6,5 @@ flask
 websockets
 mtcnn
 matplotlib
+keras_vggface
+keras_applications
