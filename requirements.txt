@@ -8,3 +8,4 @@ mtcnn
 matplotlib
 keras_vggface
 keras_applications
+flask-socketio
