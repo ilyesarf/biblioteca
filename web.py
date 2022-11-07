@@ -80,9 +80,14 @@ def login():
 
 @app.route("/delete_user", methods=["GET", "POST"])
 def delete_user():
-	users = json.loads(open("users.json", "r").read())
-
 	error = None
+
+	try:
+		users = json.loads(open("users.json", "r").read())
+	except FileNotFoundError:
+		error = "No users in db"
+		return render_template("delete_user.html", error=error)
+	
 
 	if request.method == "POST":
 		user_hash = request.form["user_hash"]
@@ -98,7 +103,7 @@ def delete_user():
 					os.remove(f"nanolock/dataset/{user_hash}.png")
 
 				else:
-					users["users"].remove(user_hash)
+					users["user_hashes"].remove(user_hash)
 					json.dump(users, open("users.json", "w"))
 					verifier.users = users
 
