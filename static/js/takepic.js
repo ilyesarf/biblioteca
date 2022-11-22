@@ -16,10 +16,7 @@ function upload_file(username, img){
     const upload_data = {
         'user_hash': MD5(username),
         'b64enc_img': img.replace('data:image/jpeg;base64,', ''),
-    }
-
-    console.log(JSON.stringify(upload_data))
-    
+    }    
     
     //send data as post request
     const form = document.createElement('form');

@@ -43,7 +43,7 @@ def signup():
 				verifier.users["user_hashes"].remove(user_hash)
 				json.dump(verifier.users, open("users.json", "w"))
 
-				os.remove(f"{verifier.dataset_path}{user_hash}.png")
+				os.remove(f"{verifier.dataset_path}{user_hash}.jpg")
 
 		else:
 			return redirect("/login")
@@ -100,14 +100,14 @@ def delete_user():
 					users["user_hashes"].remove(user_hash)
 					json.dump(users, open("users.json", "w"))
 
-					os.remove(f"nanolock/dataset/{user_hash}.png")
+					os.remove(f"nanolock/dataset/{user_hash}.jpg")
 
 				else:
 					users["user_hashes"].remove(user_hash)
 					json.dump(users, open("users.json", "w"))
 					verifier.users = users
 
-					os.remove(f"nanolock/dataset/{user_hash}.png")
+					os.remove(f"nanolock/dataset/{user_hash}.jpg")
 
 				return render_template("index.html")
 			else:
