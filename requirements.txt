@@ -3,7 +3,6 @@ opencv-contrib-python
 pillow
 numpy
 flask
-websockets
 mtcnn
 matplotlib
 keras_vggface
