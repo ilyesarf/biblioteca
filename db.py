@@ -4,23 +4,23 @@ import os
 class DB:
     def __init__(self):
         if not os.path.isfile("bookstore.db"):
-            self.con = sqlite3.connect("bookstore.db")
+            self.con = sqlite3.connect("bookstore.db", check_same_thread=False)
 
             self.cur = self.con.cursor()
 
             self.create_db()
 
         else:
-            self.con = sqlite3.connect("bookstore.db")
+            self.con = sqlite3.connect("bookstore.db", check_same_thread=False)
 
             self.cur = self.con.cursor()
-
 
     def create_db(self):
         self.cur.execute("CREATE TABLE users(user_hash)")
         self.cur.execute("CREATE TABLE store(user_hash, books_id)")
         self.cur.execute("CREATE TABLE book(id, title, date)")
 
+    #Users
     def get_users(self):
         query = "SELECT user_hash from users"
         res = self.cur.execute(query)

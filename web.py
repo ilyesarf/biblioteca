@@ -3,28 +3,20 @@ sys.path.insert(1, 'nanolock/')
 
 from flask import Flask, render_template, request, redirect, make_response
 
+from db import DB
 from nanolock.recognizer import Verification
 from nanolock.recognizer import NoFaceDetected
 
-
+db = DB()
 app = Flask(__name__)
 
 verifier = Verification()
-
-def check_user(user_hash):
-	if os.path.isfile("users.json"):
-		with open("users.json", "r") as f:
-			user_hashes = json.loads(f.read())["user_hashes"]
-			if user_hash in user_hashes:
-				return True
-
-	return False
 
 @app.route("/", methods=["GET"])
 def index():
 	try:
 		user_hash = request.cookies.get("session_id")
-		if check_user(user_hash):
+		if db.is_user(user_hash):
 			return redirect('/welcome')
 		else:
 			return render_template('index.html')
@@ -43,9 +35,10 @@ def signup():
 		user_hash = request.form["user_hash"]
 		b64enc_img = request.form["b64enc_img"]
 
-		if check_user(user_hash) == False:
+		if db.is_user(user_hash) == False:
 			try:
-				verifier.add_user(user_hash, b64enc_img)
+				verifier.add_face(user_hash, b64enc_img)
+				db.add_user(user_hash)
 
 				return redirect("/login")
 			except NoFaceDetected:
@@ -66,7 +59,7 @@ def login():
 		user_hash = request.form["user_hash"]
 		b64enc_img = request.form["b64enc_img"]
 
-		if check_user(user_hash):
+		if db.is_user(user_hash):
 			accept_login = False
 			
 			try:
@@ -106,26 +99,14 @@ def delete_user():
 		error = "No users in db"
 		return render_template("delete_user.html", error=error)
 	
-
 	if request.method == "POST":
 		user_hash = request.form["user_hash"]
 		b64enc_img = request.form["b64enc_img"]
 		
-		if check_user(user_hash):
+		if db.is_user(user_hash):
 			if verifier.accept_login(user_hash, b64enc_img):
 
-				if len(users["user_hashes"]) == 1:
-					users["user_hashes"].remove(user_hash)
-					json.dump(users, open("users.json", "w"))
-
-					os.remove(f"nanolock/dataset/{user_hash}.jpg")
-
-				else:
-					users["user_hashes"].remove(user_hash)
-					json.dump(users, open("users.json", "w"))
-					verifier.users = users
-
-					os.remove(f"nanolock/dataset/{user_hash}.jpg")
+				db.delete_user(user_hash)
 
 				#delete cookie
 				response = make_response(redirect("/"))
