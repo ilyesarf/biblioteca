@@ -17,8 +17,7 @@ class DB:
 
     def create_db(self):
         self.cur.execute("CREATE TABLE users(user_hash)")
-        self.cur.execute("CREATE TABLE store(user_hash, books_id)")
-        self.cur.execute("CREATE TABLE book(id, title, date)")
+        self.cur.execute("CREATE TABLE store(user_hash, book_id, book_title, book_date)")
 
     #Users
     def get_users(self):
