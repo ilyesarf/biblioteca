@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Biblioteca</title>
+
+	</head>
+
+    <body>
+        {% if books|length > 0 %}
+        <ul>
+            {% for book in books %}
+                <li><a href="{{book[0]}}">{{book[1]}}</a></li>
+            {% endfor %}
+        </ul>
+        <button onclick="window.location.href = '/add_book'">Add book?</button>
+        <button onclick ="window.location.href = '/delete_book'">Delete book?</button>
+        
+        {% else %}
+        <p><b>No books in store</b></p>
+        <button onclick="window.location.href = '/add_book'">Add book?</button>
+        
+        {% endif %}
+    </body>
+    
+</html>

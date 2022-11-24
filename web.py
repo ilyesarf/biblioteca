@@ -17,16 +17,13 @@ def index():
 	try:
 		user_hash = request.cookies.get("session_id")
 		if db.is_user(user_hash):
-			return redirect('/welcome')
+			return redirect('/store')
 		else:
 			return render_template('index.html')
 	except:
 		return render_template("index.html")
 
-@app.route("/welcome")
-def welcome():
-	return render_template("welcome.html")
-
+#AUTH
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
 	error = None
@@ -47,8 +44,7 @@ def signup():
 		else:
 			return redirect("/login")
 
-	return render_template('signup.html', error=error)
-
+	return render_template('auth/signup.html', error=error)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -67,7 +63,7 @@ def login():
 
 				if accept_login:
 					#set cookie
-					response = make_response(redirect("/welcome"))
+					response = make_response(redirect("/store"))
 					response.set_cookie('session_id', user_hash)
 
 					return response
@@ -79,7 +75,7 @@ def login():
 		else:
 			error = f"User doesn't exist"
 	
-	return render_template("login.html", error=error)
+	return render_template("auth/login.html", error=error)
 
 @app.route('/logout', methods=["GET"])
 def logout():
@@ -97,7 +93,7 @@ def delete_user():
 		users = json.loads(open("users.json", "r").read())
 	except FileNotFoundError:
 		error = "No users in db"
-		return render_template("delete_user.html", error=error)
+		return render_template("auth/delete_user.html", error=error)
 	
 	if request.method == "POST":
 		user_hash = request.form["user_hash"]
@@ -119,7 +115,21 @@ def delete_user():
 		else:
 			error = "User not found!"
 
-	return render_template("delete_user.html", error=error)
+	return render_template("auth/delete_user.html", error=error)
+
+#STORE
+@app.route("/store")
+def store():
+	try:
+		user_hash = request.cookies.get("session_id")
+		if db.is_user(user_hash):
+			books = db.get_books(user_hash)
+			return render_template("store/store.html", books=books)
+		else:
+			return redirect('/')
+
+	except:
+		return redirect('/')
 
 
 if __name__ == '__main__':
