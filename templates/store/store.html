@@ -9,10 +9,8 @@
 	</head>
 
     <body>
-        <!--TODO: Make divs & add logout button-->
         <div id="actions">
             <button onclick="location.href = '/add_book'">Add book</button>
-            <button onclick ="location.href = '/delete_book'">Delete book</button>
         </div>
         
         <div id="account_management">
@@ -23,7 +21,14 @@
             {% if books|length > 0 %}
                 <ul>
                     {% for book in books %}
-                        <li><a href="{{book[0]}}">{{book[1]}}</a><p>({{book[2]}})</p></li>
+                        <li>
+                            <a href="{{book[0]}}">{{book[1]}}</a>
+                            <form action="/delete_book" method="post">
+                                <input type="hidden" name="book_id" value="{{book[0]}}">
+                                <input type="submit" name="Delete" value="Delete" />
+                            </form>
+                        </li>
+                        <br>
                     {% endfor %}
                 </ul>
             {% else %}
@@ -34,28 +39,30 @@
 
     </body>
 
-    <style>
-       
-        #actions {
-            top: 1%;
-            left: 2%;
-            position: relative;
-        }
-
-        #account_management {
-            top: 1%;
-            right: 2%;
-            position: absolute;
-        }
-
-        #books {
-            bottom: 100%;
-            position: relative;
-        }
-
-        p {
-            display: inline-block;
-        }
-    </style>
-
+        
 </html>
+
+<style>
+       
+    #actions {
+        top: 1%;
+        left: 2%;
+        position: relative;
+    }
+
+    #account_management {
+        top: 1%;
+        right: 2%;
+        position: absolute;
+    }
+
+    #books {
+        top: 5%;
+        position: absolute;
+    }
+
+    form {
+        display: inline-block;
+    }
+
+</style>

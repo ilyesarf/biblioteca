@@ -2,7 +2,6 @@ import sys
 sys.path.insert(1, 'nanolock/')
 import os
 
-from datetime import date
 from flask import Flask, render_template, request, redirect, make_response
 
 from db import DB
@@ -15,7 +14,9 @@ app = Flask(__name__)
 
 verifier = Verification()
 
-upload_dir = os.getenv('UPLOAD_DIR')+'/'
+upload_dir = 'upload_dir/'
+if not os.path.exists(upload_dir):
+	os.mkdir(upload_dir)
 
 @app.route("/", methods=["GET"])
 def index():
@@ -73,12 +74,12 @@ def login():
 
 					return response
 				else:
-					error = f"Face doesnt match !!"
+					error = "Face doesnt match !!"
 
 			except NoFaceDetected:
 				error = "Face not detected"
 		else:
-			error = f"User doesn't exist"
+			error = "User doesn't exist"
 	
 	return render_template("auth/login.html", error=error)
 
@@ -141,11 +142,10 @@ def add_book():
 			if db.is_user(user_hash):
 				book = request.files['book']
 
-				book_id = utils.upload_file(upload_dir, book)
+				book_id = utils.upload_file(user_hash, upload_dir, book)
 				book_title = request.form['book_title']
-				book_date = date.today().strftime('%d %b %Y')
 
-				db.add_book(user_hash, book_id, book_title, book_date)
+				db.add_book(user_hash, book_id, book_title)
 
 				return redirect('/store')
 			else:
@@ -153,13 +153,21 @@ def add_book():
 
 		except utils.EXTENSION_NOT_ALLOWED:
 			error = "File extension is not allowed"
-			
-		except:
-			return redirect('/')
+
+		except Exception as e:
+			error = e
 
 	return render_template('store/add_book.html', error=error)
 
+@app.route("/delete_book", methods=["POST"])
+def delete_book():
+	user_hash = request.cookies.get('session_id')
+	book_id = request.form["book_id"]
+	utils.remove_file(user_hash, upload_dir, book_id)
 
+	db.delete_book(user_hash, book_id)
+
+	return redirect('/store')
 
 if __name__ == '__main__':
 	app.run(host = "0.0.0.0", port="8080", debug=True)

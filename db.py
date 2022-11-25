@@ -17,7 +17,7 @@ class DB:
 
     def create_db(self):
         self.cur.execute("CREATE TABLE users(user_hash)")
-        self.cur.execute("CREATE TABLE store(user_hash, book_id, book_title, book_date)")
+        self.cur.execute("CREATE TABLE store(user_hash, book_id, book_title)")
 
     #Users
     def get_users(self):
@@ -44,14 +44,14 @@ class DB:
 
     #Store
     def get_books(self, user_hash):
-        query = "SELECT book_id, book_title, book_date FROM store WHERE user_hash=?"
+        query = "SELECT book_id, book_title FROM store WHERE user_hash=?"
         res = self.cur.execute(query, (user_hash,))
 
         return res.fetchall()
     
-    def add_book(self, user_hash, book_id, book_title, book_date):
-        query = "INSERT INTO store VALUES (?, ?, ?, ?)"
-        self.cur.execute(query, (user_hash, book_id, book_title, book_date))
+    def add_book(self, user_hash, book_id, book_title):
+        query = "INSERT INTO store VALUES (?, ?, ?)"
+        self.cur.execute(query, (user_hash, book_id, book_title))
         self.con.commit()
     
     def is_book(self, user_hash, book_id):
