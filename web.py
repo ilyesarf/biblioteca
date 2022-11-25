@@ -151,6 +151,9 @@ def add_book():
 			else:
 				return redirect('/')
 
+		except utils.EXTENSION_NOT_ALLOWED:
+			error = "File extension is not allowed"
+			
 		except:
 			return redirect('/')
 

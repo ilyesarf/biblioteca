@@ -11,19 +11,19 @@
     <body>
         <!--TODO: Make divs & add logout button-->
         <div id="actions">
-            <button onclick="location.href = '/add_book'">Add book?</button>
-            <button onclick ="location.href = '/delete_book'">Delete book?</button>
+            <button onclick="location.href = '/add_book'">Add book</button>
+            <button onclick ="location.href = '/delete_book'">Delete book</button>
         </div>
         
         <div id="account_management">
-            <button onclick="location.href='/logout'" type="button">Logout?</button>
+            <button onclick="location.href='/logout'" type="button">Logout</button>
         </div>
         
         <div id="books">
             {% if books|length > 0 %}
                 <ul>
                     {% for book in books %}
-                        <li><a href="{{book[0]}}">{{book[1]}}</a>  <p>({{book[2]}})</p></li>
+                        <li><a href="{{book[0]}}">{{book[1]}}</a><p>({{book[2]}})</p></li>
                     {% endfor %}
                 </ul>
             {% else %}
