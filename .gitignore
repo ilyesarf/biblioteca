@@ -1,5 +1,6 @@
 tmp/
 __pycache__/
+upload_dir/
 *.swp
 *.pyc
 *.json

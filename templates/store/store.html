@@ -9,20 +9,53 @@
 	</head>
 
     <body>
-        {% if books|length > 0 %}
-        <ul>
-            {% for book in books %}
-                <li><a href="{{book[0]}}">{{book[1]}}</a></li>
-            {% endfor %}
-        </ul>
-        <button onclick="window.location.href = '/add_book'">Add book?</button>
-        <button onclick ="window.location.href = '/delete_book'">Delete book?</button>
+        <!--TODO: Make divs & add logout button-->
+        <div id="actions">
+            <button onclick="location.href = '/add_book'">Add book?</button>
+            <button onclick ="location.href = '/delete_book'">Delete book?</button>
+        </div>
         
-        {% else %}
-        <p><b>No books in store</b></p>
-        <button onclick="window.location.href = '/add_book'">Add book?</button>
+        <div id="account_management">
+            <button onclick="location.href='/logout'" type="button">Logout?</button>
+        </div>
         
-        {% endif %}
+        <div id="books">
+            {% if books|length > 0 %}
+                <ul>
+                    {% for book in books %}
+                        <li><a href="{{book[0]}}">{{book[1]}}</a>  <p>({{book[2]}})</p></li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p><b>No books in store</b></p>
+            
+            {% endif %}
+        </div>
+
     </body>
-    
+
+    <style>
+       
+        #actions {
+            top: 1%;
+            left: 2%;
+            position: relative;
+        }
+
+        #account_management {
+            top: 1%;
+            right: 2%;
+            position: absolute;
+        }
+
+        #books {
+            bottom: 100%;
+            position: relative;
+        }
+
+        p {
+            display: inline-block;
+        }
+    </style>
+
 </html>

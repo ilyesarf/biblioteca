@@ -1,16 +1,21 @@
-import sys, os, json
+import sys
 sys.path.insert(1, 'nanolock/')
+import os
 
+from datetime import date
 from flask import Flask, render_template, request, redirect, make_response
 
 from db import DB
 from nanolock.recognizer import Verification
 from nanolock.recognizer import NoFaceDetected
+import utils
 
 db = DB()
 app = Flask(__name__)
 
 verifier = Verification()
+
+upload_dir = os.getenv('UPLOAD_DIR')+'/'
 
 @app.route("/", methods=["GET"])
 def index():
@@ -88,12 +93,6 @@ def logout():
 @app.route("/delete_user", methods=["GET", "POST"])
 def delete_user():
 	error = None
-
-	try:
-		users = json.loads(open("users.json", "r").read())
-	except FileNotFoundError:
-		error = "No users in db"
-		return render_template("auth/delete_user.html", error=error)
 	
 	if request.method == "POST":
 		user_hash = request.form["user_hash"]
@@ -118,18 +117,45 @@ def delete_user():
 	return render_template("auth/delete_user.html", error=error)
 
 #STORE
-@app.route("/store")
+@app.route("/store", methods=["GET"])
 def store():
 	try:
 		user_hash = request.cookies.get("session_id")
 		if db.is_user(user_hash):
 			books = db.get_books(user_hash)
+			print(books)
 			return render_template("store/store.html", books=books)
 		else:
 			return redirect('/')
 
 	except:
 		return redirect('/')
+
+@app.route("/add_book", methods=["GET", "POST"])
+def add_book():
+	error = None
+
+	if request.method == "POST":
+		try:
+			user_hash = request.cookies.get('session_id')
+			if db.is_user(user_hash):
+				book = request.files['book']
+
+				book_id = utils.upload_file(upload_dir, book)
+				book_title = request.form['book_title']
+				book_date = date.today().strftime('%d %b %Y')
+
+				db.add_book(user_hash, book_id, book_title, book_date)
+
+				return redirect('/store')
+			else:
+				return redirect('/')
+
+		except:
+			return redirect('/')
+
+	return render_template('store/add_book.html', error=error)
+
 
 
 if __name__ == '__main__':
