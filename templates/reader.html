@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+  
+<head>
+    <title>PDF in HTML</title>
+</head>
+  
+<body>
+    <center>
+        <object data='{{ book_path }}'
+                width="800" 
+                height="500"> 
+        </object>
+    </center>
+</body>
+  
+</html>
+
+<style>
+    object {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        overflow: auto;
+    }
+</style>

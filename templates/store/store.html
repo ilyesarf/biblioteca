@@ -22,7 +22,7 @@
                 <ul>
                     {% for book in books %}
                         <li>
-                            <a href="{{book[0]}}">{{book[1]}}</a>
+                            <a href="/reader?book_id={{book[0]}}">{{book[1]}}</a>
                             <form action="/delete_book" method="post">
                                 <input type="hidden" name="book_id" value="{{book[0]}}">
                                 <input type="submit" name="Delete" value="Delete" />

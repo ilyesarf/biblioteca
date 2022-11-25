@@ -2,7 +2,7 @@ import sys
 sys.path.insert(1, 'nanolock/')
 import os
 
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, request, redirect, make_response, url_for
 
 from db import DB
 from nanolock.recognizer import Verification
@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 verifier = Verification()
 
-upload_dir = 'upload_dir/'
+upload_dir = 'static/upload_dir/'
 if not os.path.exists(upload_dir):
 	os.mkdir(upload_dir)
 
@@ -124,7 +124,6 @@ def store():
 		user_hash = request.cookies.get("session_id")
 		if db.is_user(user_hash):
 			books = db.get_books(user_hash)
-			print(books)
 			return render_template("store/store.html", books=books)
 		else:
 			return redirect('/')
@@ -168,6 +167,19 @@ def delete_book():
 	db.delete_book(user_hash, book_id)
 
 	return redirect('/store')
+
+# READER
+@app.route('/reader', methods=['GET', 'POST'])
+def reader():
+	user_hash = request.cookies.get('session_id')
+	user_upload_dir = f"{upload_dir}{user_hash}/"
+	book_id = request.args.get('book_id')
+
+	book_path = utils.get_file_path(user_upload_dir, book_id)
+	print(book_path)
+	return render_template('reader.html', book_path=f"{user_upload_dir}{book_path}")
+
+	#todo: add check for book path
 
 if __name__ == '__main__':
 	app.run(host = "0.0.0.0", port="8080", debug=True)
