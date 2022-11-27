@@ -176,8 +176,9 @@ def reader():
 	book_id = request.args.get('book_id')
 
 	book_path = utils.get_file_path(user_upload_dir, book_id)
-	print(book_path)
-	return render_template('reader.html', book_path=f"{user_upload_dir}{book_path}")
+	book_title = db.get_book_title(user_hash, book_id)
+
+	return render_template('reader.html', book_title=book_title, book_path=f"{user_upload_dir}{book_path}")
 
 	#todo: add check for book path
 

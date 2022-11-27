@@ -65,4 +65,12 @@ class DB:
         self.cur.execute(query, (user_hash, book_id))
         self.con.commit()
 
+    def get_book_title(self, user_hash, book_id):
+        query = "SELECT book_title FROM store WHERE user_hash=? AND book_id=?"
+        res = self.cur.execute(query, (user_hash, book_id))
+
+        return res.fetchone()[0]
+
+        
+
     
