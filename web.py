@@ -174,6 +174,8 @@ def reader():
 	user_hash = request.cookies.get('session_id')
 	user_upload_dir = f"{upload_dir}{user_hash}/"
 	book_id = request.args.get('book_id')
+	if book_id not in [book[0] for book in db.get_books(user_hash)]: #check if book_id exists
+		return redirect('/store')
 
 	book_path = utils.get_file_path(user_upload_dir, book_id)
 	book_title = db.get_book_title(user_hash, book_id)
@@ -183,4 +185,4 @@ def reader():
 	#todo: add check for book path
 
 if __name__ == '__main__':
-	app.run(host = "0.0.0.0", port="8080", debug=True)
+	app.run(host = "0.0.0.0", port="8080", ssl_context='adhoc', debug=True)
