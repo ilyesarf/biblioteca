@@ -1,0 +1,5 @@
+flask
+flask-socketio
+psycopg2-binary
+grpcio
+protobuf

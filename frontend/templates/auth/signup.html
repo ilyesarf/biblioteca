@@ -2,10 +2,19 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
-        <script src="{{url_for('static', filename='js/takepic.js')}}"></script>
-        
+        <script src="../../static/js/takepic.js"></script>
+        <style>
+            .error {
+                color: #b30000;
+                background: #ffe6e6;
+                border: 1px solid #b30000;
+                padding: 8px;
+                margin: 10px 0;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+        </style>
         <title>Biblioteca</title>
     </head>
 
@@ -18,9 +27,7 @@
         <input type="text" id="username" name="username"><br><br>
         <button onclick="takepic()" type="button">Save my face</button>
 
-        {% if error %}
-        <p class="error"><strong>Error:</strong> {{ error }}</p>
-        {% endif %}
+        <div id="error-message" class="error" style="display:none;"></div>
 
     </body>
 

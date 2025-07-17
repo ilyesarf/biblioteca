@@ -1,4 +1,4 @@
 [submodule "nanolock"]
 	path = nanolock
-	url = git@github.com:Quimzy/nanolock.git
+	url = git@github.com:ilyesarf/nanolock.git
 	branch = biblioteca

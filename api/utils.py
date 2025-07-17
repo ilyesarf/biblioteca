@@ -1,11 +1,7 @@
 
 import os
 
-from db import DB
 from uuid import uuid4
-
-
-db = DB()
 
 class EXTENSION_NOT_ALLOWED(Exception):
     pass

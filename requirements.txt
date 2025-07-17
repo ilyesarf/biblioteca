@@ -8,3 +8,5 @@ matplotlib
 keras_vggface
 keras_applications
 flask-socketio
+psycopg2-binary
+grpc
