@@ -3,7 +3,7 @@ import nanolock_pb2
 import nanolock_pb2_grpc
 
 class NanoLockClient:
-    def __init__(self, host='localhost', port=50051):
+    def __init__(self, host='nanolock', port=50051):
         self.channel = grpc.insecure_channel(f'{host}:{port}')
         self.stub = nanolock_pb2_grpc.NanoLockStub(self.channel)
 

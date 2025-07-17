@@ -38,7 +38,7 @@ function upload_file(username, img){
             data = {};
         }
         if (response.ok && data.success) {
-            window.location.href = '/';
+            window.location.href = '/'; // Redirect to Google
         } else {
             let msg = (data && data.error) ? data.error : 'Unknown error occurred';
             showError(msg, response.status);

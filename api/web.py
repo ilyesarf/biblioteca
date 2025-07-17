@@ -29,6 +29,7 @@ def signup():
 		return {"success": False, "error": "Missing user_hash or image"}, 400
 	if db.is_user(user_hash):
 		return {"success": False, "error": "User already exists"}, 409
+	app.logger.info(f"Adding user {user_hash} ")
 	success, reason = nanolock.add_user(user_hash, b64enc_img)
 	if success:
 		db.add_user(user_hash)
@@ -38,8 +39,8 @@ def signup():
 
 @app.route("/login", methods=["POST"])
 def login():
-	user_hash = request.form.get("user_hash")
-	b64enc_img = request.form.get("b64enc_img")
+	user_hash = request.json.get("user_hash")
+	b64enc_img = request.json.get("b64enc_img")
 	if not user_hash or not b64enc_img:
 		return {"success": False, "error": "Missing user_hash or image"}, 400
 	if not db.is_user(user_hash):
