@@ -22,31 +22,27 @@ function upload_file(username, img){
     const path = window.location.pathname.split("/")[1]; // expects /auth/signup or /auth/login
     const api_url = `/api/${path}`;
 
-    // Send data as JSON via fetch
-    fetch(api_url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(upload_data)
-    })
-    .then(async response => {
-        let data;
-        try {
-            data = await response.json();
-        } catch (e) {
-            data = {};
-        }
-        if (response.ok && data.success) {
-            window.location.href = '/'; // Redirect to Google
-        } else {
-            let msg = (data && data.error) ? data.error : 'Unknown error occurred';
-            showError(msg, response.status);
-        }
-    })
-    .catch(error => {
-        showError('Network error: ' + error, 0);
-    });
+    apiCall(api_url, 'POST', upload_data)
+        .then(res => {
+            if (res.ok && res.data.success) {
+                if (path === 'login') {
+                    document.cookie = res.data.cookie;
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 100);
+                } else if (path === 'signup') {
+                    window.location.href = '/login';
+                } else if (path === 'delete_user') {
+                    document.cookie = '';
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 100);
+                }
+            } else {
+                let msg = (res.data && res.data.error) ? res.data.error : 'Unknown error occurred';
+                showError(msg, res.status);
+            }
+        });
 }
 
 function showError(msg, code) {

@@ -9,6 +9,7 @@ services:
       - ./frontend/static:/usr/share/nginx/html/static
       - ./frontend/static/js:/usr/share/nginx/html/static/js
       - ./frontend/templates:/usr/share/nginx/html/
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
     depends_on:

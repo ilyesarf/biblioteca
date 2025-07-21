@@ -6,6 +6,10 @@ from uuid import uuid4
 class EXTENSION_NOT_ALLOWED(Exception):
     pass
 
+def create_session_cookie(user_hash):
+    cookie = f"session_id={user_hash}; Path=/; SameSite=Lax"
+    return cookie
+
 def allowed_file(file_extension):
     ALLOWED_EXTENSIONS = {'.txt', '.pdf', '.docx'}
     return file_extension in ALLOWED_EXTENSIONS

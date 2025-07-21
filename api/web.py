@@ -13,9 +13,6 @@ app = Flask(__name__)
 
 nanolock = NanoLockClient()
 
-upload_dir = 'upload_dir/'
-if not os.path.exists(upload_dir):
-	os.mkdir(upload_dir)
 
 
 #AUTH
@@ -48,7 +45,8 @@ def login():
 	verified, reason = nanolock.verify_face(user_hash, b64enc_img)
 	if verified:
 		# Optionally set a session cookie here if needed
-		return {"success": True, "message": "Login successful"}, 200
+		cookie = utils.create_session_cookie(user_hash)
+		return {"success": True, "message": "Login successful", "cookie": cookie}, 200
 	else:
 		return {"success": False, "error": reason}, 401
 
@@ -71,6 +69,14 @@ def delete_user():
 		return {"success": True, "message": "User deleted"}, 200
 	else:
 		return {"success": False, "error": "U can't delete another user's account"}, 401
+
+@app.route("/check_user", methods=["GET"])
+def check_user():
+	user_hash = request.cookies.get("session_id")
+	if db.is_user(user_hash):
+		return {"success": True, "message": "User exists"}, 200
+	else:
+		return {"success": False, "error": "User not found"}, 404
 
 #STORE
 @app.route("/store", methods=["GET"])
